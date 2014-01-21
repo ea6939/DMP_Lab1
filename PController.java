@@ -14,8 +14,8 @@ import lejos.nxt.*;
 public class PController implements UltrasonicController {
 
 	private final int bandCenter, bandWidth;
-	private final int motorStraight = 200, FILTER_OUT = 20;				// 250,60
-	private final NXTRegulatedMotor leftMotor = Motor.A, rightMotor = Motor.C;	
+	private final int motorStraight = 300, FILTER_OUT = 20;				// 250,60
+	private final NXTRegulatedMotor leftMotor = Motor.A, rightMotor = Motor.B;	
 	private int distance;
 	private int currentLeftSpeed;
 	private int filterControl;		
@@ -94,9 +94,7 @@ public class PController implements UltrasonicController {
 		
 	}
 	
-	// Compute Adjusted speed: for positive error:  new_speed < motorStraight
-	// 						  for negative error:  new_speed > motorStraight
-	// make sure  Lab1.getMotorLow() <= new_speed <= Lab1.getMotorHigh()
+	//Fix speed according to error (or distance btw robot and wall
 	private int fixSpeed(int error){
 		int new_speed = Math.max(Lab1.getMotorLow(),  motorStraight - (int)(turn*error));
 		new_speed = Math.min(new_speed,  Lab1.getMotorHigh());

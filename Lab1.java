@@ -16,9 +16,9 @@ public class Lab1 {
 	private static final SensorPort usPort = SensorPort.S1;
 	//private static final SensorPort lightPort = SensorPort.S2;
 	
-	private static final int bandCenter = 20, bandWidth = 3; //bandWidth is the tolerance level, bandCenter is the distance 
+	private static final int bandCenter = 35, bandWidth = 3; //bandWidth is the tolerance level, bandCenter is the distance 
 															 //between the wall and the robot
-	private static final int motorLow = 100, motorHigh = 400;
+	private static final int motorLow = 100, motorHigh = 700;
 	
 	
 	public static void main(String [] args) {

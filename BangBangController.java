@@ -3,7 +3,7 @@
  * Wall Follower
  * 
  * Elitsa Asenova - 260481980
- * Andrea Cabral - 
+ * Andrea Cabral - 260465023
  * 
  * Implementing a wall follower using the bang-bang and the p controller.
  * 
@@ -13,10 +13,10 @@ import lejos.nxt.*;
 public class BangBangController implements UltrasonicController {
 	private final int bandCenter, bandWidth;
 	private final int motorLow, motorHigh;
-	private final int motorStraight = 200;  // 
+	private final int motorStraight = 300;  // 
 	private final int FILTER_OUT = 20;  	// added
 	private int delta = 60;  				// added
-	private final NXTRegulatedMotor leftMotor = Motor.A, rightMotor = Motor.C;
+	private final NXTRegulatedMotor leftMotor = Motor.A, rightMotor = Motor.B;
 	private int distance;
 	private int filterControl, leftSpeed, rightSpeed;  // added
 
@@ -57,12 +57,12 @@ public class BangBangController implements UltrasonicController {
 		// Wall on the LEFT
 		int error = distance - this.bandCenter;
 		
-		//Within tolerance level (bandWidt), going straight
+		//Within tolerance level (bandWidth), going straight
 		if (Math.abs(error) <= bandWidth) {  
 			System.out.println(bandWidth);
 			rightSpeed = motorStraight;
 			leftSpeed = motorStraight;
-			leftMotor.setSpeed(rightSpeed);
+			rightMotor.setSpeed(rightSpeed);
 			leftMotor.setSpeed(leftSpeed);
 			LCD.drawString("Within Tolerance - going forward", 0, 6);
 		
@@ -80,7 +80,7 @@ public class BangBangController implements UltrasonicController {
 			rightSpeed = motorStraight - delta;
 			leftMotor.setSpeed(leftSpeed);
 			rightMotor.setSpeed(rightSpeed);
-			LCD.drawString("Too close - Turning away from wall ", 0, 6);
+			LCD.drawString("Too close ", 0, 6);
 		
 		//Too far from wall
 		} else { 	
@@ -96,7 +96,7 @@ public class BangBangController implements UltrasonicController {
 			rightSpeed = motorStraight + delta;
 			leftMotor.setSpeed(leftSpeed);
 			rightMotor.setSpeed(rightSpeed);
-			LCD.drawString("Too far - Turning towards wall", 0, 6);
+			LCD.drawString("Too far", 0, 6);
 		}
 	}
 
@@ -122,7 +122,7 @@ public class BangBangController implements UltrasonicController{
 	private final int bandCenter, bandwith;
 	private final int motorLow, motorHigh;
 	private final int motorStraight = 200;
-	private final NXTRegulatedMotor leftMotor = Motor.A, rightMotor = Motor.C;
+	private final NXTRegulatedMotor leftMotor = Motor.A, rightMotor = Motor.B;
 	private int distance;
 	private int currentLeftSpeed;
 	
