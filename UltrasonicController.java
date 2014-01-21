@@ -3,7 +3,7 @@
  * Wall Follower
  * 
  * Elitsa Asenova - 260481980
- * Andrea Cabral - 
+ * Andrea Cabral - 260465023
  * 
  * Implementing a wall follower using the bang-bang and the p controller.
  * 

@@ -1,11 +1,19 @@
 /*
  * ECSE211 - Lab1
  * Wall Follower
+ * BangBangController.java
  * 
  * Elitsa Asenova - 260481980
  * Andrea Cabral - 260465023
  * 
- * Implementing a wall follower using the bang-bang and the p controller.
+ * Implementing a wall follower using the bang-bang controller.
+ * The bang-bang is an on/off controller that controlls the speed
+ * of the wheels (inner and outer) depending on the distance btw
+ * the wall and the follower. The following extra details were implemented
+ * along with regular wall and object detection :
+ * 			- avoid confusion when a gap is in the wall
+ * 			- recognize concave corners and avoids collision
+ * 			- make turns at convex corners sharper
  * 
  */
 import lejos.nxt.*;
@@ -13,12 +21,12 @@ import lejos.nxt.*;
 public class BangBangController implements UltrasonicController {
 	private final int bandCenter, bandWidth;
 	private final int motorLow, motorHigh;
-	private final int motorStraight = 300;  // 
-	private final int FILTER_OUT = 20;  	// added
-	private int delta = 60;  				// added
+	private final int motorStraight = 300;   
+	private final int FILTER_OUT = 20;  	
+	private int delta = 60;  				
 	private final NXTRegulatedMotor leftMotor = Motor.A, rightMotor = Motor.B;
 	private int distance;
-	private int filterControl, leftSpeed, rightSpeed;  // added
+	private int filterControl, leftSpeed, rightSpeed;  
 
 	public BangBangController(int bandCenter, int bandWidth, int motorLow,
 			int motorHigh) {
@@ -27,8 +35,8 @@ public class BangBangController implements UltrasonicController {
 		this.bandWidth = bandWidth;
 		this.motorLow = motorLow;
 		this.motorHigh = motorHigh;
-		this.leftSpeed = motorStraight; 	// added
-		this.rightSpeed = motorStraight;	// added 
+		this.leftSpeed = motorStraight; 	//setting the start speed for left and right to straight speed
+		this.rightSpeed = motorStraight;	
 		leftMotor.setSpeed(leftSpeed);
 		rightMotor.setSpeed(rightSpeed);
 		leftMotor.forward();
@@ -40,6 +48,7 @@ public class BangBangController implements UltrasonicController {
 	@Override
 	public void processUSData(int distance) {
 
+		//Avoid getting confused by gaps
 		// rudimentary filter -> helps the robot deal woth gaps
 		if (distance == 255 && filterControl < FILTER_OUT) {
 			// bad value, do not set the distance var, however do increment the filter value
@@ -54,7 +63,6 @@ public class BangBangController implements UltrasonicController {
 		}
 		
 
-		// Wall on the LEFT
 		int error = distance - this.bandCenter;
 		
 		//Within tolerance level (bandWidth), going straight
@@ -108,48 +116,8 @@ public class BangBangController implements UltrasonicController {
 		return rightSpeed;
 	}
 
-@Override
-public int readUSDistance() {
-	return this.distance;
-}
-}
-
-/*
-import lejos.nxt.NXTRegulatedMotor;
-import lejos.nxt.*;
-
-public class BangBangController implements UltrasonicController{
-	private final int bandCenter, bandwith;
-	private final int motorLow, motorHigh;
-	private final int motorStraight = 200;
-	private final NXTRegulatedMotor leftMotor = Motor.A, rightMotor = Motor.B;
-	private int distance;
-	private int currentLeftSpeed;
-	
-	public BangBangController(int bandCenter, int bandwith, int motorLow, int motorHigh) {
-		//Default Constructor
-		this.bandCenter = bandCenter;
-		this.bandwith = bandwith;
-		this.motorLow = motorLow;
-		this.motorHigh = motorHigh;
-		leftMotor.setSpeed(motorStraight);
-		rightMotor.setSpeed(motorStraight);
-		leftMotor.forward();
-		rightMotor.forward();
-		currentLeftSpeed = 0;
-	}
-	
-	@Override
-	public void processUSData(int distance) {
-		this.distance = distance;
-		// TODO: process a movement based on the us distance passed in (BANG-BANG style)
-		
-	}
-
 	@Override
 	public int readUSDistance() {
 		return this.distance;
 	}
 }
-
-*/

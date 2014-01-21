@@ -3,10 +3,16 @@
  * Wall Follower
  * 
  * Elitsa Asenova - 260481980
- * Andrea Cabral - 
+ * Andrea Cabral - 260465023
  * 
- * Implementing a wall follower using the bang-bang and the p controller.
- * 
+ * Implementing a wall follower using the p controller.
+ * The p controller is a linear scalar. 
+ * The speed of the wheels is determined by the error (or distance btw wall and robot).
+ * The following extra details were implemented
+ * along with regular wall and object detection :
+ * 			- avoid confusion when a gap is in the wall
+ * 			- recognize concave corners and avoids collision
+ * 			- make turns at convex corners sharper
  */
 import lejos.nxt.NXTRegulatedMotor;
 import lejos.nxt.*;
@@ -14,7 +20,7 @@ import lejos.nxt.*;
 public class PController implements UltrasonicController {
 
 	private final int bandCenter, bandWidth;
-	private final int motorStraight = 300, FILTER_OUT = 20;				// 250,60
+	private final int motorStraight = 300, FILTER_OUT = 20;				
 	private final NXTRegulatedMotor leftMotor = Motor.A, rightMotor = Motor.B;	
 	private int distance;
 	private int currentLeftSpeed;
@@ -40,6 +46,7 @@ public class PController implements UltrasonicController {
 	@Override
 	public void processUSData(int distance) {
 
+		//Avoid getting confused by gaps in the wall
 		// rudimentary filter
 		if (distance == 255 && filterControl < FILTER_OUT) {
 			// bad value, do not set the distance var, however do increment the filter value
@@ -54,10 +61,9 @@ public class PController implements UltrasonicController {
 		}
 		
 		
-		// Wall on the left
+		
 		int error = distance - this.bandCenter;
-		
-		
+	
 		//Within tolerance level (bandWidt), turn is 0
 		if (Math.abs(error) <= bandWidth){ 	
 			this.turn = 0;
@@ -71,7 +77,7 @@ public class PController implements UltrasonicController {
 			//If it's too far, to make sharper turns, set turn to 0.2
 			if(error > 150){
 				this.turn = 0.2;
-			}else{
+			} else {
 				this.turn = 5;
 			}
 			
@@ -119,58 +125,3 @@ public class PController implements UltrasonicController {
 	
 
 }
-
-/*
- 
- import lejos.nxt.NXTRegulatedMotor;
-import lejos.nxt.*;
-
-public class PController implements UltrasonicController {
-	
-	private final int bandCenter, bandwith;
-	private final int motorStraight = 200, FILTER_OUT = 20;
-	private final NXTRegulatedMotor leftMotor = Motor.A, rightMotor = Motor.C;	
-	private int distance;
-	private int currentLeftSpeed;
-	private int filterControl;
-	
-	public PController(int bandCenter, int bandwith) {
-		//Default Constructor
-		this.bandCenter = bandCenter;
-		this.bandwith = bandwith;
-		leftMotor.setSpeed(motorStraight);
-		rightMotor.setSpeed(motorStraight);
-		leftMotor.forward();
-		rightMotor.forward();
-		currentLeftSpeed = 0;
-		filterControl = 0;
-	}
-	
-	@Override
-	public void processUSData(int distance) {
-		
-		// rudimentary filter
-		if (distance == 255 && filterControl < FILTER_OUT) {
-			// bad value, do not set the distance var, however do increment the filter value
-			filterControl ++;
-		} else if (distance == 255){
-			// true 255, therefore set distance to 255
-			this.distance = distance;
-		} else {
-			// distance went below 255, therefore reset everything.
-			filterControl = 0;
-			this.distance = distance;
-		}
-		// TODO: process a movement based on the us distance passed in (P style)
-		
-	}
-
-	
-	@Override
-	public int readUSDistance() {
-		return this.distance;
-	}
-
-}
-
-*/
